@@ -1,0 +1,45 @@
+services:
+  backend:
+    container_name: venture-validator-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/app:/app/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama
+    networks:
+      - app_network
+
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    ports:
+      - 11434:11434
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    networks:
+      - app_network
+
+  frontend:
+    container_name: venture-validator-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - app_network
+    
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  ollama_data:
+    driver: local

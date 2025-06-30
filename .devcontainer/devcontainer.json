@@ -1,0 +1,4 @@
+{
+	"name": "Venture Validator",
+	"dockerComposeFile": "../docker-compose.yml"
+}

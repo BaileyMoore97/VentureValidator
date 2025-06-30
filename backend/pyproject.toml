@@ -1,0 +1,11 @@
+[project]
+name = "venture-validator"
+version = "0.1.0"
+description = "Takes business ideas and gives feedback on steps to validate the idea."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115.14",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+]

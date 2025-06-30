@@ -1,0 +1,152 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ===== FRONTEND (React/Node.js) =====
+# Dependencies
+frontend/node_modules/
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+frontend/coverage/
+/coverage
+
+# Production builds
+frontend/build/
+frontend/dist/
+/build
+
+# Environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== BACKEND (Python) =====
+# Python bytecode
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+backend/*.so
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+backend/.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+backend/*.egg-info/
+backend/.installed.cfg
+backend/*.egg
+backend/MANIFEST
+
+# Virtual environments
+backend/venv/
+backend/env/
+backend/ENV/
+backend/.venv/
+venv/
+env/
+ENV/
+.venv/
+
+# Backend environment files
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+
+# Database files
+backend/*.db
+backend/*.sqlite3
+*.db
+*.sqlite3
+
+# Backend logs
+backend/logs/
+backend/*.log
+logs/
+
+# Testing and coverage
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+.pytest_cache/
+.coverage
+htmlcov/
+.nyc_output/
+
+# ===== DOCKER & CONTAINERS =====
+# Docker
+.docker/
+docker-compose.override.yml
+.dockerignore
+
+# Container volumes and data
+volumes/
+data/
+
+# ===== IDE & EDITORS =====
+# VSCode
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ===== OS GENERATED FILES =====
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+ehthumbs.db
+Thumbs.db
+
+# ===== TEMPORARY & CACHE FILES =====
+*.tmp
+*.temp
+.cache/
+
+# ===== BACKUP FILES =====
+*.bak
+*.backup
+
+# ===== PACKAGE MANAGER LOCK FILES =====
+# Uncomment if you don't want to track lock files
+# package-lock.json
+# yarn.lock
+# uv.lock
