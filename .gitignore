@@ -6,15 +6,30 @@ frontend/node_modules/
 /node_modules
 /.pnp
 .pnp.js
+.pnp.*
 
 # Testing
 frontend/coverage/
 /coverage
 
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/next-env.d.ts
+/.next/
+/out/
+next-env.d.ts
+
 # Production builds
 frontend/build/
 frontend/dist/
 /build
+
+# TypeScript
+frontend/*.tsbuildinfo
+frontend/.tsbuildinfo
+*.tsbuildinfo
+.tsbuildinfo
 
 # Environment files
 frontend/.env
@@ -31,9 +46,21 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
+
+# Frontend tooling cache
+frontend/.eslintcache
+frontend/.tailwindcss-cache/
+frontend/.postcss-cache/
+frontend/.turbo/
+.eslintcache
+.tailwindcss-cache/
+.postcss-cache/
+.turbo/
 
 # ===== BACKEND (Python) =====
 # Python bytecode
@@ -150,3 +177,9 @@ Thumbs.db
 # package-lock.json
 # yarn.lock
 # uv.lock
+
+# Modern package managers
+frontend/.pnpm-store/
+.pnpm-store/
+.bun/
+bun.lockb
