@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Static files
+public/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env*
+
+# Cache directories
+.cache/
+
+# Generated files
+*.d.ts
+
+# Configuration files
+next.config.*
+postcss.config.*
+tailwind.config.*
+
+# Documentation
+README.md
+CHANGELOG.md
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Coverage reports
+coverage/
+
+# Storybook
+storybook-static/
