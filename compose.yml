@@ -1,5 +1,16 @@
 services:
+  prestart:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    build: 
+      context: ./backend
+    networks:
+      - app_network
+    command: bash scripts/prestart.sh
+    env_file:
+      - .env
+
   backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     container_name: venture-validator-backend
     build:
       context: ./backend
@@ -8,10 +19,15 @@ services:
       - ./backend/app:/app/app
     ports:
       - "8000:8000"
-    depends_on:
-      - ollama
+    #depends_on:
+    #  ollama:
+    #    condition: service_healthy
+    #  prestart:
+    #    condition: service_completed_successfully
     networks:
       - app_network
+    env_file:
+      - .env
 
   ollama:
     image: docker.io/ollama/ollama:latest

@@ -1,165 +1,269 @@
-import { useState } from 'react';
-import CategoryInput from './CategoryInput';
-import GeneratedList from './ListOptions';
-import { ShoppingCart } from 'lucide-react';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TabsContent } from '@radix-ui/react-tabs';
+import { ShoppingBag, Trash2, X, Minus, Plus } from 'lucide-react';
+import { ShoppingItem } from './ShoppingListPlanner';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+} from '@/components/ui/dropdown-menu';
 
-export interface ShoppingItem {
-    id: string;
-    name: string;
-    category: string;
-    quantity: number;
-    completed: boolean;
+interface GeneratedListProps {
+    items: ShoppingItem[];
+    frequency: string;
+    setFrequency: (value: 'weekly' | 'fortnightly' | 'monthly') => void;
+    numberOfPeople: number;
+    onRemoveItem: (id: string) => void;
+    onToggleItem: (id: string) => void;
+    onUpdateQuantity: (id: string, quantity: number) => void;
+    onClearAll: () => void;
 }
 
-const ShoppingListGenerator = () => {
-    const [items, setItems] = useState<ShoppingItem[]>([]);
-    const [frequency, setFrequency] = useState<
-        'weekly' | 'fortnightly' | 'monthly'
-    >('weekly');
-    const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+const GeneratedList = ({
+    items,
+    frequency,
+    setFrequency,
+    numberOfPeople,
+    onRemoveItem,
+    onToggleItem,
+    onUpdateQuantity,
+    onClearAll,
+}: GeneratedListProps) => {
+    const completedCount = items.filter((item) => item.completed).length;
+    const totalCount = items.length;
 
-    const categories = [
-        { name: 'Food', color: 'bg-green-100 border-green-300', icon: '🥕' },
-        { name: 'Cleaning', color: 'bg-blue-100 border-blue-300', icon: '🧽' },
-        {
-            name: 'Pet Goods',
-            color: 'bg-purple-100 border-purple-300',
-            icon: '🐕',
+    const groupedItems = items.reduce(
+        (acc, item) => {
+            if (!acc[item.category]) {
+                acc[item.category] = [];
+            }
+            acc[item.category].push(item);
+            return acc;
         },
-        {
-            name: 'Personal Care',
-            color: 'bg-pink-100 border-pink-300',
-            icon: '🧴',
-        },
-        {
-            name: 'Household Items',
-            color: 'bg-yellow-100 border-yellow-300',
-            icon: '🏠',
-        },
-    ];
-
-    const addItem = (
-        categoryName: string,
-        itemName: string,
-        quantity: number
-    ) => {
-        const newItem: ShoppingItem = {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-            name: itemName,
-            category: categoryName,
-            quantity: quantity,
-            completed: false,
-        };
-        setItems((prev) => [...prev, newItem]);
-    };
-
-    const removeItem = (id: string) => {
-        setItems((prev) => prev.filter((item) => item.id !== id));
-    };
-
-    const toggleItem = (id: string) => {
-        setItems((prev) =>
-            prev.map((item) =>
-                item.id === id ? { ...item, completed: !item.completed } : item
-            )
-        );
-    };
-
-    const updateQuantity = (id: string, quantity: number) => {
-        setItems((prev) =>
-            prev.map((item) =>
-                item.id === id
-                    ? { ...item, quantity: Math.max(1, quantity) }
-                    : item
-            )
-        );
-    };
-
-    const clearAllItems = () => {
-        setItems([]);
-    };
+        {} as Record<string, ShoppingItem[]>
+    );
 
     return (
-        <div className="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-            {/* Left side - Input categories */}
-            <Card className="h-fit bg-white/80 backdrop-blur-sm border-gray-200">
-                <CardHeader className="flex items-center gap-2 mb-6">
-                    <ShoppingCart className="h-6 w-6 text-blue-600" />
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                        List Builder
-                    </h2>
-                </CardHeader>
-                {/* Shopping Settings */}
-                <CardContent className="bg-white/60 p-4 rounded-lg border border-white/50 space-y-4">
-                    {/* Number of People */}
-                    <div>
-                        <Label
-                            htmlFor="numberOfPeople"
-                            className="text-sm font-medium text-gray-700"
-                        >
-                            Number of people:
-                        </Label>
-                        <Input
-                            id="numberOfPeople"
-                            type="number"
-                            value={numberOfPeople}
-                            onChange={(e) =>
-                                setNumberOfPeople(
-                                    Math.max(1, parseInt(e.target.value) || 1)
-                                )
-                            }
-                            min="1"
-                            className="w-20 mt-1 bg-white/80 border-white/50 focus:bg-white"
+        <Card className="h-fit bg-white/90 backdrop-blur-sm border-gray-200 shadow-lg">
+            <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                        <ShoppingBag className="h-5 w-5 text-blue-600" />
+                        <div>
+                            Your
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="link">
+                                        <div>{frequency}</div>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    className="w-56"
+                                    align="start"
+                                >
+                                    <DropdownMenuRadioGroup
+                                        value={frequency}
+                                        onValueChange={setFrequency}
+                                    >
+                                        <DropdownMenuRadioItem value="weekly">
+                                            Weekly
+                                        </DropdownMenuRadioItem>
+                                        <DropdownMenuRadioItem value="fortnightly">
+                                            Fortnightly
+                                        </DropdownMenuRadioItem>
+                                        <DropdownMenuRadioItem value="monthly">
+                                            Monthly
+                                        </DropdownMenuRadioItem>
+                                    </DropdownMenuRadioGroup>
+                                </DropdownMenuContent>
+                                Shopping List
+                            </DropdownMenu>
+                        </div>
+                    </CardTitle>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onClearAll}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        disabled={!totalCount}
+                    >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Clear All
+                    </Button>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <span>{totalCount} items total</span>
+                    <Separator orientation="vertical" className="h-400" />
+                    <span>
+                        For {numberOfPeople}{' '}
+                        {numberOfPeople === 1 ? 'person' : 'people'}
+                    </span>
+                    {completedCount > 0 && (
+                        <>
+                            <Separator orientation="vertical" className="h-4" />
+                            <span className="text-green-600">
+                                {completedCount} completed
+                            </span>
+                        </>
+                    )}
+                </div>
+                {totalCount > 0 && (
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{
+                                width: `${(completedCount / totalCount) * 100}%`,
+                            }}
                         />
                     </div>
-                    <Tabs defaultValue="Food" className="w-full">
-                        {/* Category Tabs */}
-                        <p className="text-sm font-medium text-gray-700 mb-3">
-                            Categories:
+                )}
+            </CardHeader>
+            {items.length === 0 ? (
+                <CardContent>
+                    <div className="text-center py-12 text-gray-500">
+                        <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg font-medium mb-2">
+                            Your list is empty
                         </p>
-                        <TabsList>
-                            {categories.map((category) => (
-                                <TabsTrigger value={category.name}>
-                                    {category.name}
-                                </TabsTrigger>
-                            ))}
-                        </TabsList>
-
-                        {categories.map((category) => (
-                            <TabsContent value={category.name}>
-                                <CategoryInput
-                                    key={category.name}
-                                    categoryName={category.name}
-                                    categoryColor={category.color}
-                                    categoryIcon={category.icon}
-                                    onAddItem={addItem}
-                                />
-                            </TabsContent>
-                        ))}
-                    </Tabs>
+                        <p className="text-sm">
+                            Start adding items from the categories on the left
+                        </p>
+                    </div>
                 </CardContent>
-            </Card>
-            {/* Right side - Generated shopping list */}
-            <div className="lg:sticky lg:top-8 lg:self-start">
-                <GeneratedList
-                    items={items}
-                    frequency={frequency}
-                    setFrequency={setFrequency}
-                    numberOfPeople={numberOfPeople}
-                    onRemoveItem={removeItem}
-                    onToggleItem={toggleItem}
-                    onUpdateQuantity={updateQuantity}
-                    onClearAll={clearAllItems}
-                />
-            </div>
-        </div>
+            ) : (
+                <CardContent>
+                    <ScrollArea className="h-[500px] pr-4">
+                        <div className="space-y-6">
+                            {Object.entries(groupedItems).map(
+                                ([category, categoryItems]) => (
+                                    <div key={category}>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <Badge
+                                                variant="secondary"
+                                                className="text-xs"
+                                            >
+                                                {category}
+                                            </Badge>
+                                            <span className="text-xs text-gray-500">
+                                                {categoryItems.length} item
+                                                {categoryItems.length !== 1
+                                                    ? 's'
+                                                    : ''}
+                                            </span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {categoryItems.map((item) => (
+                                                <div
+                                                    key={item.id}
+                                                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all hover:shadow-sm ${
+                                                        item.completed
+                                                            ? 'bg-green-50 border-green-200'
+                                                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                                                    }`}
+                                                >
+                                                    <Checkbox
+                                                        checked={item.completed}
+                                                        onCheckedChange={() =>
+                                                            onToggleItem(
+                                                                item.id
+                                                            )
+                                                        }
+                                                        className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                                                    />
+                                                    <span
+                                                        className={`flex-1 transition-all ${
+                                                            item.completed
+                                                                ? 'line-through text-gray-500'
+                                                                : 'text-gray-800'
+                                                        }`}
+                                                    >
+                                                        {item.name}
+                                                    </span>
+
+                                                    {/* Quantity Controls */}
+                                                    <div className="flex items-center gap-1 bg-white rounded border px-2 py-1">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                onUpdateQuantity(
+                                                                    item.id,
+                                                                    item.quantity -
+                                                                        1
+                                                                )
+                                                            }
+                                                            className="h-6 w-6 p-0 hover:bg-gray-100"
+                                                            disabled={
+                                                                item.quantity <=
+                                                                1
+                                                            }
+                                                        >
+                                                            <Minus className="h-3 w-3" />
+                                                        </Button>
+                                                        <Input
+                                                            type="number"
+                                                            value={
+                                                                item.quantity
+                                                            }
+                                                            onChange={(e) =>
+                                                                onUpdateQuantity(
+                                                                    item.id,
+                                                                    parseInt(
+                                                                        e.target
+                                                                            .value
+                                                                    ) || 1
+                                                                )
+                                                            }
+                                                            className="w-12 h-6 text-center text-xs border-0 bg-transparent p-0"
+                                                            min="1"
+                                                        />
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                onUpdateQuantity(
+                                                                    item.id,
+                                                                    item.quantity +
+                                                                        1
+                                                                )
+                                                            }
+                                                            className="h-6 w-6 p-0 hover:bg-gray-100"
+                                                        >
+                                                            <Plus className="h-3 w-3" />
+                                                        </Button>
+                                                    </div>
+
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            onRemoveItem(
+                                                                item.id
+                                                            )
+                                                        }
+                                                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    </ScrollArea>
+                </CardContent>
+            )}
+        </Card>
     );
 };
 
-export default ShoppingListGenerator;
+export default GeneratedList;
